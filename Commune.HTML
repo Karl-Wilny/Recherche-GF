@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Recherche Commune Île-de-France</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  input { width: 300px; padding: 5px; margin-bottom: 10px; }
+  .result { margin-top: 10px; }
+  .commune { padding: 5px; border-bottom: 1px solid #ddd; }
+</style>
+</head>
+<body>
+
+<h2>Recherche de commune</h2>
+<input type="text" id="search" placeholder="Tapez le nom de la commune...">
+
+<div id="results" class="result"></div>
+
+<script>
+let communes = [];
+
+// On charge les données depuis un fichier externe
+fetch('communes.json')
+  .then(response => response.json())
+  .then(data => communes = data)
+  .catch(err => console.error('Erreur chargement communes:', err));
+
+const searchInput = document.getElementById('search');
+const resultsDiv = document.getElementById('results');
+
+searchInput.addEventListener('input', function() {
+  const query = this.value.toLowerCase();
+  resultsDiv.innerHTML = '';
+  
+  if(query.length === 0) return; // ne rien afficher si vide
+  
+  const matches = communes.filter(c => c.nom.toLowerCase().includes(query));
+  
+  if(matches.length === 0) {
+    resultsDiv.innerHTML = "<i>Aucune commune trouvée</i>";
+    return;
+  }
+  
+  matches.forEach(c => {
+    const div = document.createElement('div');
+    div.classList.add('commune');
+    div.textContent = `${c.nom} - Code postal: ${c.code_postal}, Département: ${c.departement}`;
+    resultsDiv.appendChild(div);
+  });
+});
+</script>
+
+</body>
+</html>
