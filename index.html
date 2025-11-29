@@ -6,11 +6,10 @@
 <title>Formulaire de demande de GF</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&amp;family=Poppins:wght@300;400;500&amp;display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
-    /* --- DESIGN (Identique au précédent mais optimisé) --- */
+    /* --- DESIGN --- */
     body { 
         font-family: 'Poppins', sans-serif; 
         background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
@@ -136,10 +135,9 @@
 
 <script>
 // --- DONNÉES ---
-// JSON des données (supposé impeccable)
+// ⚠️⚠️ COLLEZ ICI TOUTE LA LISTE DES VILLES QUE VOUS AVIEZ AVANT ⚠️⚠️
 const data = [
-    // .[
-    {
+   {
         "CodePostal": 78660,
         "Ville": "Ablis",
         "Secteur": 11,
@@ -4261,57 +4259,49 @@ cpInput.addEventListener('input', ()=>{
 // --- GÉNÉRATION & ENVOI ---
 document.getElementById("genererPDF").addEventListener("click", () => {
   const { jsPDF } = window.jspdf;
-  // Orientation Portrait, unité mm, format A4
   const doc = new jsPDF('p', 'mm', 'a4');
   const get = id => document.getElementById(id).value || "";
 
-  // 1. VÉRIFICATIONS (Ajout CP et Ville)
+  // 1. VÉRIFICATIONS
   if(!demande1.checked && !demande2.checked){ alert("Veuillez sélectionner le type de demande."); return; }
   if(!get("tel")){ alert("Le numéro de téléphone est obligatoire."); return; }
   if(!get("cp")){ alert("Le code postal est obligatoire."); return; }
   if(!get("ville")){ alert("La ville est obligatoire."); return; }
   if(!get("informateur")){ alert("Veuillez renseigner votre nom (Informateur)."); return; }
 
-  // 2. DESIGN DU PDF (Style Pro)
+  // 2. DESIGN DU PDF
   const primaryColor = [44, 62, 80]; // Bleu Nuit
   const accentColor = [212, 175, 55]; // Or
   const lightGray = [240, 240, 240];
 
-  // Bandeau Header
+  // En-tête
   doc.setFillColor(...primaryColor);
   doc.rect(0, 0, 210, 40, 'F');
-  
-  // Titre
   doc.setFont("helvetica", "bold");
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(20);
   doc.text("FICHE DE DEMANDE GF", 105, 20, { align: "center" });
   
-  // Date et Type
   const typeDemande = demande1.checked ? "Première demande" : "Deuxième demande";
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.text(`Date : ${get("date") || "Non daté"}  |  Type : ${typeDemande.toUpperCase()}`, 105, 30, { align: "center" });
 
-  // --- Corps du document ---
+  // Corps
   doc.setTextColor(0, 0, 0);
   let y = 55;
 
-  // Fonction pour créer un bloc de section
   const drawSection = (title, contentLines, startY) => {
-      // Barre de titre
       doc.setFillColor(...lightGray);
       doc.rect(15, startY, 180, 8, 'F');
       doc.setDrawColor(...accentColor);
       doc.setLineWidth(0.5);
-      doc.line(15, startY, 15, startY+8); // Petite barre or à gauche
-      
+      doc.line(15, startY, 15, startY+8);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
       doc.setTextColor(...primaryColor);
       doc.text(title.toUpperCase(), 20, startY + 5.5);
 
-      // Contenu
       doc.setTextColor(0, 0, 0);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
@@ -4322,37 +4312,32 @@ document.getElementById("genererPDF").addEventListener("click", () => {
           doc.text(line.label, 20, contentY);
           doc.setFont("helvetica", "normal");
           doc.text(line.value, 70, contentY);
-          // Ligne pointillée
           doc.setDrawColor(200, 200, 200);
           doc.setLineDash([1, 1], 0);
           doc.line(20, contentY+2, 190, contentY+2);
-          doc.setLineDash([]); // Reset
+          doc.setLineDash([]);
           contentY += 10;
       });
-      return contentY + 5; // Retourne la nouvelle position Y
+      return contentY + 5;
   };
 
-  // Section 1 : Identité
   y = drawSection("Identité du demandeur", [
       { label: "Nom :", value: get("nom").toUpperCase() },
       { label: "Prénom :", value: get("prenom") },
       { label: "Téléphone :", value: get("tel") }
   ], y);
 
-  // Section 2 : Localisation
   y = drawSection("Localisation", [
       { label: "Adresse :", value: get("adresse") },
       { label: "Code Postal :", value: get("cp") },
       { label: "Ville :", value: get("ville") }
   ], y);
 
-  // Section 3 : Technique (Auto)
   y = drawSection("Informations Secteur", [
       { label: "Numéro de Secteur :", value: get("secteur") },
       { label: "Responsable :", value: get("responsable") }
   ], y);
 
-  // Section 4 : Observations
   doc.setFillColor(...lightGray);
   doc.rect(15, y, 180, 8, 'F');
   doc.setDrawColor(...accentColor);
@@ -4360,15 +4345,13 @@ document.getElementById("genererPDF").addEventListener("click", () => {
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...primaryColor);
   doc.text("OBSERVATIONS", 20, y + 5.5);
-  
   y += 15;
   doc.setTextColor(0, 0, 0);
   doc.setFont("helvetica", "normal");
   const splitObs = doc.splitTextToSize(get("observations"), 170);
   doc.text(splitObs, 20, y);
   
-  // Pied de page (Informateur)
-  y = 260; // Bas de page
+  y = 260;
   doc.setDrawColor(...primaryColor);
   doc.setLineWidth(0.5);
   doc.line(15, y, 195, y);
@@ -4376,13 +4359,11 @@ document.getElementById("genererPDF").addEventListener("click", () => {
   doc.text(`Dossier traité le ${new Date().toLocaleDateString()} par :`, 15, y + 6);
   doc.setFont("helvetica", "bold");
   doc.text(get("informateur").toUpperCase(), 15, y + 11);
-  
   doc.setFont("helvetica", "italic");
   doc.setFontSize(8);
   doc.text("Document généré automatiquement via la plateforme GF.", 195, y + 11, { align: "right" });
 
-
-  // --- ETAT BOUTON & ENVOI ---
+  // --- ENVOI ---
   const btn = document.getElementById("genererPDF");
   const originalText = btn.textContent;
   btn.textContent = "Transmission en cours...";
@@ -4391,23 +4372,10 @@ document.getElementById("genererPDF").addEventListener("click", () => {
 
   const pdfBlob = doc.output('blob');
   const formData = new FormData();
-  // --- PREPARATION DE L'EMAIL ---
-  const pdfBlob = doc.output('blob');
-  const formData = new FormData();
   
-  // 1. OBJET : "Demande de GF : Ville - Secteur X"
   formData.append("_subject", "Demande de GF : " + get("ville") + " - Secteur " + get("secteur"));
-  
-  // Désactive le captcha
   formData.append("_captcha", "false");
-  
-  // 2. CORPS DU MESSAGE : Nom du client + Téléphone
-  const messageBody = "Nouvelle demande : " + get("nom") + " " + get("prenom") + ".\n" +
-                      "Tél : " + get("tel");
-                      
-  formData.append("message", messageBody);
-
-  // 3. PIÈCE JOINTE
+  formData.append("message", "Nouvelle demande pour le client : " + get("nom") + " " + get("prenom") + ".\nTél : " + get("tel"));
   formData.append("attachment", pdfBlob, "GF_" + get("nom") + ".pdf");
 
   // ⚠️⚠️ REMPLACE TON EMAIL ICI ⚠️⚠️
@@ -4419,7 +4387,6 @@ document.getElementById("genererPDF").addEventListener("click", () => {
       if (response.ok) {
           doc.save(`Dossier_GF_${get("nom")}.pdf`);
           alert("✅ Votre demande de GF a bien été prise en compte.");
-          // document.getElementById("formulaire").reset(); 
       } else {
           alert("⚠️ PDF généré, mais erreur d'envoi email.");
           doc.save(`Dossier_GF_${get("nom")}.pdf`);
