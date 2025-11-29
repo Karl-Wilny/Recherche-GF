@@ -4375,7 +4375,7 @@ document.getElementById("genererPDF").addEventListener("click", () => {
   
   formData.append("_subject", "Demande de GF : " + get("ville") + " - Secteur " + get("secteur"));
   formData.append("_captcha", "false");
-  formData.append("message", "Nouvelle demande pour le client : " + get("nom") + " " + get("prenom") + ".\nTél : " + get("tel"));
+  formData.append("message", "Nouvelle demande : " + get("nom") + " " + get("prenom") + ".\nTél : " + get("tel"));
   formData.append("attachment", pdfBlob, "GF_" + get("nom") + ".pdf");
 
   // ⚠️⚠️ REMPLACE TON EMAIL ICI ⚠️⚠️
