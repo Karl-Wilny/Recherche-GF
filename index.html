@@ -4391,11 +4391,24 @@ document.getElementById("genererPDF").addEventListener("click", () => {
 
   const pdfBlob = doc.output('blob');
   const formData = new FormData();
+  // --- PREPARATION DE L'EMAIL ---
+  const pdfBlob = doc.output('blob');
+  const formData = new FormData();
   
-  formData.append("_subject", `GF : ${get("nom")} (${get("ville")})`);
+  // 1. OBJET : "Demande de GF : Ville - Secteur X"
+  formData.append("_subject", "Demande de GF : " + get("ville") + " - Secteur " + get("secteur"));
+  
+  // Désactive le captcha
   formData.append("_captcha", "false");
-  formData.append("message", `Nouvelle demande de ${get("informateur")}.\nVille: ${get("ville")}\nResp: ${get("responsable")}\nTél: ${get("tel")}`);
-  formData.append("attachment", pdfBlob, `GF_${get("nom")}.pdf`);
+  
+  // 2. CORPS DU MESSAGE : Nom du client + Téléphone
+  const messageBody = "Nouvelle demande : " + get("nom") + " " + get("prenom") + ".\n" +
+                      "Tél : " + get("tel");
+                      
+  formData.append("message", messageBody);
+
+  // 3. PIÈCE JOINTE
+  formData.append("attachment", pdfBlob, "GF_" + get("nom") + ".pdf");
 
   // ⚠️⚠️ REMPLACE TON EMAIL ICI ⚠️⚠️
   fetch("https://formsubmit.co/Ka.koumba_mouanda@epmistes.net", {
