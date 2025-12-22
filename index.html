@@ -123,13 +123,13 @@
         </div>
 
         <div class="grid-row">
-            <div><label>Date</label><input type="date" id="date"></div>
-            <div><label class="required">Téléphone</label><input type="text" id="tel" placeholder="06 00 00 00 00"></div>
+            <div><label>Nom</label><input type="text" id="nom" placeholder="Nom de famille"></div>
+            <div><label>Prénom</label><input type="text" id="prenom" placeholder="Prénom"></div>
         </div>
 
         <div class="grid-row">
-            <div><label>Nom</label><input type="text" id="nom" placeholder="Nom de famille"></div>
-            <div><label>Prénom</label><input type="text" id="prenom" placeholder="Prénom"></div>
+            <div><label>Date</label><input type="date" id="date"></div>
+            <div><label class="required">Téléphone</label><input type="text" id="tel" placeholder="06 00 00 00 00"></div>
         </div>
 
         <label>Adresse</label><input type="text" id="adresse" placeholder="Numéro et nom de rue">
@@ -151,6 +151,14 @@
             <div><label>Secteur</label><input type="text" id="secteur" readonly title="Remplissage automatique"></div>
             <div><label>Responsable</label><input type="text" id="responsable" readonly title="Remplissage automatique"></div>
         </div>
+
+        <h3>Informations complémentaires</h3>
+        <label>Observations</label><textarea id="observations" rows="4" placeholder="Notez ici toute information utile..."></textarea>
+
+        <label class="required">Informateur (Votre nom)</label><input type="text" id="informateur" placeholder="Obligatoire pour le suivi">
+
+        <button type="button" id="genererPDF" class="btn-main">Valider et Envoyer le dossier</button>
+   </div>
 
         <h3>Informations complémentaires</h3>
         <label>Observations</label><textarea id="observations" rows="4" placeholder="Notez ici toute information utile..."></textarea>
